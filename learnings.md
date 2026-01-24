@@ -91,8 +91,23 @@ Backend:
 
     - modified BASE_URL path to /api/
 
-# DOMAIN NAME 
+# Adding a Custom Domain Name 
     - Purchased domain name from NameCheap
     - DNS setup from CloudFlare
     - Add cloudflare nameservers at NameCheap 
-    
+    - DNS A record: dev-finder.online -> map to IPv4 address (EC2)
+    - Set SSL certificate as 'Flexible' in CloudFlare (Website runs on HTTPS but not fully)
+        From browser -> Cloudflare: Secure
+        Cloudflare -> Server: Normal
+
+# Sending Emails Via Amazon SES
+    - AWS IAM:  
+        - Create a IAM user
+        - Give access to AmazonSESFullAccess
+    - Amazon SES:
+        - Create Identity
+        - Verify Domain name
+        - Verify Email Address
+        - Install AWS SES SDK (v3) 
+        - Code Examples: https://github.com/awsdocs/aws-doc-sdk-examples/tree/main/javascriptv3/example_code/ses#code-examples
+        
