@@ -107,7 +107,13 @@ Backend:
     - Amazon SES:
         - Create Identity
         - Verify Domain name
-        - Verify Email Address
+        - Verify Email Address identity
         - Install AWS SES SDK (v3) 
         - Code Examples: https://github.com/awsdocs/aws-doc-sdk-examples/tree/main/javascriptv3/example_code/ses#code-examples
+        - Setup SES client
+        - Access Credentials should be created in IAM under security credentials tab
+        - Add creds to .env
+        - Create code for SES Client
+        - Code for sending email
+        - Make email dynamic by passing more params to the run function
         
