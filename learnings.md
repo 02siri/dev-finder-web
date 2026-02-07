@@ -116,4 +116,15 @@ Backend:
         - Create code for SES Client
         - Code for sending email
         - Make email dynamic by passing more params to the run function
-        
+    
+# Scheduling cron jobs in NodeJs
+    - Installing node-cron
+    - Learning about cron expressions syntax - crontab.guru
+    - Schedule a job
+    - date-fns
+    - Find all the unique emailIds who've got friend requests in previous day
+    - Send email
+    - Explore queue mechanism to send bulk emails (or else it will cause performance bottleneck) or Amazon SES bulk emails sending
+    - Make sendEmail function dynamic
+    - Explore email body templates
+    - bee-queue and bull npm packages for queueing 
