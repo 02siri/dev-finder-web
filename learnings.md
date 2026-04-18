@@ -128,3 +128,8 @@ Backend:
     - Make sendEmail function dynamic
     - Explore email body templates
     - bee-queue and bull npm packages for queueing 
+
+# Stripe Payment Gateway Integration
+    - Created a UI for premium page
+    - 
+    
