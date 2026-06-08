@@ -131,5 +131,11 @@ Backend:
 
 # Stripe Payment Gateway Integration
     - Created a UI for premium page
-    - 
-    
+    - Created an API for createOrder in backend
+    - Added key & secret
+    - Initialised Stripe in utils
+    - creating product + price on Stripe
+    - Created model & schema of Payment
+    - Saved the order in payments collection
+    - Make the API dynamic (can work for silver/gold/premium memberships)
+    - Setup Stripe webhook on your live API

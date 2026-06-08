@@ -9,12 +9,12 @@ import UserCard from "./UserCard";
 
 const EditProfile = ({user}) => {
     
-    const [firstName, setFirstName] = useState(user.firstName);
-    const [lastName, setLastName] = useState(user.lastName);
+    const [firstName, setFirstName] = useState(user.firstName || "");
+    const [lastName, setLastName] = useState(user.lastName || "");
     const [age, setAge] = useState(user.age || "");
-    const [gender, setGender] = useState(user.gender);
-    const [about, setAbout] = useState(user.about);
-    const [photoURL, setPhotoURL] = useState(user.photoURL);
+    const [gender, setGender] = useState(user.gender || "");
+    const [about, setAbout] = useState(user.about || "");
+    const [photoURL, setPhotoURL] = useState(user.photoURL || "");
 
     const [toast, setToast] = useState(false);
     const [error, setError] = useState("");
@@ -148,7 +148,7 @@ const EditProfile = ({user}) => {
         </g>
     </svg>
     <input
-        type="text"
+        type="number"
         className="grow text-base-content"
         value={age}
         onChange={(e)=>setAge(e.target.value)}
