@@ -1,46 +1,41 @@
-import { useState,useEffect } from "react";
+import { useState, useEffect } from "react";
 import { BASE_URL } from "../utils/constants";
 import axios from "axios";
 
 const Premium = () => {
-
   const [isUserPremium, setIsUserPremium] = useState(false);
+  const [loading, setLoading] = useState(true); // Added loading state
 
   useEffect(() => {
     const verifyPremium = async () => {
       try {
-        const res = await axios.get
-          (BASE_URL + "premium/verify", 
-            { withCredentials: true,});
+        // Double check your BASE_URL value! It must point to https://dev-finder.online/api/ (or your actual backend)
+        const res = await axios.get(BASE_URL + "premium/verify", {
+          withCredentials: true,
+        });
+        
         if (res.data.isPremium) {
           setIsUserPremium(true);
         }
       } catch (err) {
         console.error("Failed to verify premium status:", err);
+      } finally {
+        setLoading(false); // Stop loading regardless of success/error
       }
     };
     verifyPremium();
   }, []);
 
-  const handleBuyClick = async (type) => {
-    try {
-      const res = await axios.post(
-        BASE_URL + "payment/createProduct",
-        { membershipType: type },
-        { withCredentials: true }
-      );
+  if (loading) {
+    return <div className="text-center m-10">Checking membership status...</div>;
+  }
 
-      // Redirect user to Stripe-hosted checkout page
-      window.location.href = res.data.checkoutUrl;
-
-    } catch (err) {
-      console.error("Payment initiation failed:", err);
-    }
-  };
+  if (isUserPremium) {
+    return <div className="text-center m-10 font-bold text-2xl">You're already a Premium User</div>;
+  }
 
   return (
-   isUserPremium? ("You're already a Premium User"):
-   (<div>
+    <div>
       <div className="m-10">
         <div className="flex w-full">
           <div className="card bg-base-300 rounded-box grid h-80 grow place-items-center">
@@ -77,7 +72,6 @@ const Premium = () => {
         </div>
       </div>
     </div>
-  )
   );
 };
 
