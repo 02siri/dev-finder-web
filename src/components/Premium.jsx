@@ -1,18 +1,37 @@
+import { useState } from "react";
 import { BASE_URL } from "../utils/constants";
 import axios from "axios";
 
 const Premium = () => {
 
+  const [isUserPremium, setIsUserPremium] = useState(false);
+
+  useEffect(() => {
+    const verifyPremium = async () => {
+      try {
+        const res = await axios.get
+          (BASE_URL + "premium/verify", 
+            { withCredentials: true,});
+        if (res.data.isPremium) {
+          setIsUserPremium(true);
+        }
+      } catch (err) {
+        console.error("Failed to verify premium status:", err);
+      }
+    };
+    verifyPremium();
+  }, []);
+
   const handleBuyClick = async (type) => {
     try {
-      const response = await axios.post(
+      const res = await axios.post(
         BASE_URL + "payment/createProduct",
         { membershipType: type },
         { withCredentials: true }
       );
 
       // Redirect user to Stripe-hosted checkout page
-      window.location.href = response.data.checkoutUrl;
+      window.location.href = res.data.checkoutUrl;
 
     } catch (err) {
       console.error("Payment initiation failed:", err);
@@ -20,7 +39,8 @@ const Premium = () => {
   };
 
   return (
-    <div>
+   isUserPremium? ("You're already a Premium User"):
+   (<div>
       <div className="m-10">
         <div className="flex w-full">
           <div className="card bg-base-300 rounded-box grid h-80 grow place-items-center">
@@ -57,6 +77,7 @@ const Premium = () => {
         </div>
       </div>
     </div>
+  )
   );
 };
 
