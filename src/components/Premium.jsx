@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState,useEffect } from "react";
 import { BASE_URL } from "../utils/constants";
 import axios from "axios";
 
