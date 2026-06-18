@@ -139,3 +139,48 @@ Backend:
     - Saved the order in payments collection
     - Make the API dynamic (can work for silver/gold/premium memberships)
     - Setup Stripe webhook on your live API
+
+ # Real Time Chat using Websocket (Socket.io)
+    - Build the UI for a chat windoe on /chat/:targetUserId
+    -Set up Socket.io in backend:
+        - 1. Installation: npm i socket.io
+        - 2. Extract http from http 
+             const http = require("http")
+        - 3. Created server using http using existing app 
+             const server = http.createServer(app);
+        - 4. Import socket from socket package 
+             const socket = require("socket.io");
+        - 5. Create io, and pass the server with its config
+             const io = socket(server, {
+                //config
+                cors : {
+                    origin: "http://localhost:5173",
+                },
+            })
+        - 6. Start listening to the connection 
+             io.on("connection", (socket)=>{
+                //handle events
+            })
+        - 7. Replace app.listen with server.listen
+             server.listen(...)
+    - Set up Socket.io in frontend:
+        - 1. Installation : npm i socket.io-client
+        - 2. Exporting io and creating connection: 
+                import { io } from "socket.io-client";
+                export const createSocketConnection = () => {
+                //give it a URL where you want it to connect -> BE
+                return io(BASE_URL);
+                };
+        - 3. in Chat.jsx, create the socket connection & Emit an event/Listen to Events
+        - 4. As soon as the component unlaods, disconnect the socket
+    - HW: 
+        - Improve the UI
+        - Fix security bug - Auth in web sockets.
+        - Fix bug - If I'm not a friend, I can't send/receive messages
+        - Ft: Show green symbol when online/ Last seen ...hrs ago
+        - Own Ft: Notifications for conn Requests/msg
+        - Limit Msgs when fetching from DB/Build pagination - show 10 msgs, then scroll then 10 msgs.
+        - Project Ideas :
+            - Tic Tac Toe game
+            - Chess game
+            - TypeRacer
