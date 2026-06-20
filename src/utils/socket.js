@@ -1,21 +1,25 @@
 import { io } from "socket.io-client";
-import { BASE_URL } from "../utils/constants";
-
-//This function creates a connection and 
-// returns us the scoket object, where we can send events, emit events, join a chat, send msgs etc.
+import { BASE_URL } from "./constants";
+let socketInstance = null;
+export const getSocket = () => {
+    return socketInstance;
+};
 export const createSocketConnection = () => {
-
+    if (socketInstance) return socketInstance;
     const config = {
-        // withCredentials is enabled to automatically send cookies during the handshake.
-        withCredentials: true
+        withCredentials: true // Crucial to send HttpOnly cookies to the backend
     };
-
     if(location.hostname==="localhost"){
-        //give it a URL where you want it to connect -> BE
-        return io(BASE_URL, config);
+        socketInstance = io(BASE_URL, config);
     }else{
-        return io("/", {path:"/api/socket.io/",...config});
+        socketInstance = io("/", {path:"/api/socket.io/", ...config});
     }
-
     
+    return socketInstance;
+};
+export const disconnectSocket = () => {
+    if (socketInstance) {
+        socketInstance.disconnect();
+        socketInstance = null;
+    }
 };
