@@ -175,8 +175,8 @@ Backend:
         - 4. As soon as the component unlaods, disconnect the socket
     - HW: 
         - Improve the UI
-        - Fix security bug - Auth in web sockets.
-        - Fix bug - If I'm not a friend, I can't send/receive messages
+        - Fix security bug - Auth in web sockets. ✅
+        - Fix bug - If I'm not a friend, I can't send/receive messages ✅
         - Ft: Show green symbol when online/ Last seen ...hrs ago
         - Own Ft: Notifications for conn Requests/msg
         - Limit Msgs when fetching from DB/Build pagination - show 10 msgs, then scroll then 10 msgs.
@@ -209,5 +209,17 @@ Backend:
     - Modified sendMessage to emit the message using the existing active connection (socketRef.current), rather than creating a new connection.
     - Added a connect_error socket event listener to log any authentication or connection errors to the console.
 
-    
+# Chat Pagination
+BE: routes/chat.js
+- Get total number of messages in the conversation by selecting only the array IDs
+- Calculate limits and slices
 
+FE: Chat.jsx
+- Pagination and hasMore state.
+- Detect scroll-to-top event on the chat container (within 50px of the top).
+- Fetch the next page and prepend the new messages to the message state.
+- Retain the scroll height offset so the viewport doesn't jump abruptly when loading older messages.
+- Implement ref-based scrolling:
+    - Initial load / Page 1: Instantly scroll to the bottom of the chat container.
+    - New message received/sent: Scroll to the bottom only if the user is already scrolled near the bottom. Otherwise, show a floating helper message or keep viewport stable.
+    - Pagination loads: Do not scroll to the bottom; maintain scroll position.
