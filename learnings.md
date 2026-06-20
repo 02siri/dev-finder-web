@@ -184,3 +184,30 @@ Backend:
             - Tic Tac Toe game
             - Chess game
             - TypeRacer
+
+# Auth in WebSockets
+    1. BACKEND
+    middlewares/auth.js
+    - Created a cookie-parser to help parse raw Cookie header string into an object
+    - Created a socket middleware to authenticate the cookie using the token, decoding the token, verifying the user and then authenticating it. 
+
+    Because the authentication token is stored inside an httpOnly cookie (token), JavaScript running in the browser cannot read it directly. However, the browser will send it automatically in the headers during the WebSocket HTTP handshake.
+
+    utils/server.js
+    - Configured CORS settings for the Socket.io server to allow credentials by setting credentials: true.
+    - Registered the authentication middleware: io.use(socketAuth).
+    - Modified the event handlers (joinChat and sendMessage) to retrieve user details directly from the authenticated socket.user object (e.g. socket.user._id, socket.user.firstName) instead of accepting those parameters from the client request. This prevents any spoofing of user identities.
+
+    2. FRONTEND
+    utils/socket.js
+    - We need to tell the Socket.io client to send cookies when connecting to the server.
+    Added { withCredentials: true } configuration options to the client-side socket connection so that cookies are included.
+
+    components/Chat.jsx
+    - Imported useRef to store the active socket connection.
+    - In useEffect, the connection is established once when mounting, saved in socketRef.current, and cleaned up (socket.disconnect()) when unmounting.
+    - Modified sendMessage to emit the message using the existing active connection (socketRef.current), rather than creating a new connection.
+    - Added a connect_error socket event listener to log any authentication or connection errors to the console.
+
+    
+

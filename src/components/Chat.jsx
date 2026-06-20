@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useParams } from "react-router-dom";
 import {createSocketConnection} from "../utils/socket"
 import { useSelector } from "react-redux";
@@ -15,6 +15,8 @@ const Chat = () =>{
     const user = useSelector(store=>store.user);
     const firstName = user?.firstName;
     const userId = user?._id;
+    const socketRef = useRef(null); // Reference to the persistent socket connection
+
 
     const fetchChatMessages = async()=>{
         try{const chat = await axios.get(BASE_URL + "chat/" + targetUserId, 
@@ -49,8 +51,10 @@ const Chat = () =>{
         if(!userId){
             return;
         }
-        
+
+        // Establish socket connection and cache in ref
         const socket = createSocketConnection();
+        socketRef.current = socket
 
                 //event called    //data
         socket.emit("joinChat", {firstName, userId, targetUserId});
@@ -59,24 +63,33 @@ const Chat = () =>{
         socket.on("messageReceived", ({firstName, lastName, text})=>{
             console.log(firstName + ": " + text);
             setMessages((messages)=>[...messages ,{text,firstName, lastName}]);
-        })
+        });
+
+        // Listen for connection or authentication errors
+        socket.on("connect_error", (err) => {
+            console.error("Socket authentication/connection error:", err.message);
+        });
+
         //Fn called when component unmounts
         return () => {
             //Very imp to disconnect the socket
             socket.disconnect();
+            socketRef.current = null;
         };
     },[userId, targetUserId]);
 
     const sendMessage = () => {
         const socket = createSocketConnection();
-        socket.emit("sendMessage",{
-            firstName: user.firstName,
-            lastName : user.lastName,
-            userId,
-            targetUserId,
-            text: newMessage,
-        });
-        setNewMessage("");
+       // Send messages using the existing connection
+    const sendMessage = () => {
+        if (socketRef.current && newMessage.trim()) {
+            socketRef.current.emit("sendMessage",{
+                targetUserId,
+                text: newMessage,
+            });
+            setNewMessage("");
+        }
+    };
     };
 
 
