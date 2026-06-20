@@ -54,7 +54,11 @@ const Chat = () =>{
 
         // Establish socket connection and cache in ref
         const socket = createSocketConnection();
-        socketRef.current = socket
+        socketRef.current = socket;
+
+        // socket.on("connect", () => {
+        //     console.log("Socket connected successfully! ID:", socket.id);
+        // });
 
                 //event called    //data
         socket.emit("joinChat", {firstName, userId, targetUserId});
@@ -78,10 +82,8 @@ const Chat = () =>{
         };
     },[userId, targetUserId]);
 
-    const sendMessage = () => {
-        const socket = createSocketConnection();
-       // Send messages using the existing connection
-    const sendMessage = () => {
+        const sendMessage = () => {
+        // This runs directly when clicked!
         if (socketRef.current && newMessage.trim()) {
             socketRef.current.emit("sendMessage",{
                 targetUserId,
@@ -90,8 +92,6 @@ const Chat = () =>{
             setNewMessage("");
         }
     };
-    };
-
 
     return(
     <div className="w-3/4 mx-auto border border-gray-100 m-5 h-[70vh] flex flex-col">
