@@ -10,6 +10,7 @@ const Chat = () => {
     const { targetUserId } = useParams();
     const [messages, setMessages] = useState([]);
     const [newMessage, setNewMessage] = useState("");
+    const [partner, setPartner] = useState(null);
     
     // Pagination state
     const [page, setPage] = useState(1);
@@ -58,6 +59,13 @@ const Chat = () => {
                 };
             }) || [];
 
+            if (res?.data?.participants) {
+                const chatPartner = res.data.participants.find((p) => p._id !== userId);
+                if (chatPartner) {
+                    setPartner(chatPartner);
+                }
+            }
+
             const container = chatContainerRef.current;
             const previousScrollHeight = container ? container.scrollHeight : 0;
             const previousScrollTop = container ? container.scrollTop : 0;
@@ -96,6 +104,7 @@ const Chat = () => {
         setPage(1);
         setHasMore(true);
         setMessages([]);
+        setPartner(null);
         fetchChatMessages(1);
     }, [targetUserId]);
 
@@ -166,9 +175,8 @@ const Chat = () => {
         }
     };
 
-  const otherUser = messages.find((msg) => msg.firstName !== firstName);
-  const partnerName = otherUser
-    ? `${otherUser.firstName} ${otherUser.lastName || ""}`
+  const partnerName = partner
+    ? `${partner.firstName} ${partner.lastName || ""}`
     : "Developer Partner";
 
   return (
@@ -177,11 +185,19 @@ const Chat = () => {
         {/* Header */}
         <div className="px-6 py-4 border-b border-base-300 flex justify-between items-center bg-base-200/90">
           <div className="flex items-center gap-3">
-            <div className="avatar placeholder">
-              <div className="bg-primary/10 text-primary rounded-full w-10 h-10 ring-2 ring-primary/20">
-                <span className="text-sm font-black uppercase">
-                  {partnerName.charAt(0)}
-                </span>
+            <div className="avatar shrink-0">
+              <div className="w-10 h-10 rounded-full ring-2 ring-primary/20 overflow-hidden bg-primary/10 text-primary flex items-center justify-center">
+                {partner?.photoURL ? (
+                  <img
+                    src={partner.photoURL}
+                    alt={partnerName}
+                    className="object-cover w-full h-full select-none"
+                  />
+                ) : (
+                  <span className="text-sm font-black uppercase">
+                    {partnerName.charAt(0)}
+                  </span>
+                )}
               </div>
             </div>
             <div className="text-left">
