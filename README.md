@@ -1,105 +1,79 @@
-# Dev-Finder-web
+# DevFinder Frontend
 
-This is the React web client for DevFinder. It offers a smooth, minimal, and modern interface where developers can swipe to match, review incoming connection requests, view active developer matches, subscribe to premium membership, and chat in real-time.
+This is the React web client for DevFinder, a full-stack social networking platform for software developers. It provides a modern interface where developers can discover matches, review pending requests, upgrade their accounts, and chat in real-time.
 
-## Technologies
-- **Bundler & Tooling**: Vite + React
-- **Styling**: TailwindCSS (v3) + daisyUI (for clean, responsive components)
+## Tech Stack
+- **Framework & Tooling**: Vite + React
+- **Styling**: TailwindCSS (v3) + daisyUI
 - **State Management**: Redux Toolkit & React Redux
 - **Routing**: React Router DOM (v7)
-- **API Calls**: Axios (with credentials configuration for HTTP-only cookies)
-- **WebSockets**: Socket.io-client
+- **HTTP Transport**: Axios
+- **Real-Time Communication**: Socket.io-client
 
 ---
 
 ## Client Features
 
-### 1. Global State Management (Redux Store Slices)
-Global state is managed by `/src/utils/appStore.js` with the following modular slices:
-- **`userSlice`**: Stores details of the currently logged-in user profile. If null, automatically redirects visitors back to the login screen.
-- **`feedSlice`**: Stores the queue of developer cards currently available to browse on the user feed dashboard.
-- **`connectionSlice`**: Keeps track of all developer contacts whom you have successfully connected with.
-- **`requestsSlice`**: Synchronizes pending, incoming connection requests to enable instant accept/reject updates.
+### 1. State Management
+- **Redux Store Slices**: Manages global UI states, including user profiles, candidate feeds, connections, and request synchronization.
 
-### 2. Authentication Flow & Cookie Setup
-- All REST requests use Axios. The global Axios configuration enables `withCredentials: true`.
-- This ensures that HTTP-only cookie tokens created by the Express API are automatically included in subsequent requests to identify the user session securely.
+### 2. Session Integrity
+- **Cookie Security**: Employs global Axios configurations to ensure secure session credentials are automatically attached to network queries.
 
-### 3. Real-Time Chat Interface
-- Located in `/src/components/Chat.jsx`.
-- Sets up a persistent socket instance using `/src/utils/socket.js`.
-- On loading, emits `joinChat` passing the `targetUserId` to establish room connection.
-- Displays paginated chat history with scroll mechanics.
-- Listens to incoming `messageReceived` events and appends them dynamically to the chat log.
-- **Cleanup**: Triggers socket disconnection as soon as the Chat component unmounts to free up socket resources.
+### 3. Real-Time Chat & Inbox
+- **Room Subscriptions**: Establishes secure WebSocket client helper connections.
+- **Dynamic Notifications**: Listens to message notifications dynamically, updating badge counts and cleaning up resources on component unmounts.
 
-### 4. Interactive Profile Customization & Premium Status
-- Users can update their name, age, profile photo, and description in `/src/components/EditProfile.jsx`.
-- `/src/components/Premium.jsx` offers Silver/Gold/Premium subscription upgrades. Directs users to Stripe checkout links and displays premium badges based on subscription verification endpoints.
-
-### 5. Real-Time Notification Inbox
-- Informs users immediately when they receive a new connection request, when their sent connection request is accepted, or when a new chat message arrives.
-- Listens to socket events in the background and updates the header badge count dynamically.
-
----
-
-## Project Structure
-```text
-src/
-├── App.jsx             # Main Router and Redux Provider entrypoint
-├── main.jsx            # DOM mounting script
-├── index.css           # Global Tailwind directive file
-├── components/         # UI Elements
-│   ├── Body.jsx        # App layout shell (Navbar, Main Content, Footer)
-│   ├── NavBar.jsx      # Navigation, profile dropdowns, and notification badges
-│   ├── Landing.jsx     # Landing welcome page
-│   ├── Login.jsx       # Login & Register forms
-│   ├── Feed.jsx        # Matching cards container
-│   ├── UserCard.jsx    # Individual candidate profile card
-│   ├── Connections.jsx # Friend list view
-│   ├── Requests.jsx    # Accept/reject request drawer
-│   ├── Chat.jsx        # Live messaging screen
-│   └── Premium.jsx     # Stripe payment activation UI
-└── utils/              # Logic utilities
-    ├── appStore.js     # Redux root store
-    ├── userSlice.js    # Profile slice
-    ├── feedSlice.js    # Swipe feed slice
-    ├── socket.js       # WebSocket client helper
-    └── constants.js    # API Endpoint base configurations
-```
+### 4. Interactive Pages
+- **Profile & Payments**: Features profile editing interfaces and options to upgrade account plans, verifying user premium status.
 
 ---
 
 ## Local Setup & Development
 
-### 1. Configure the API Base URL
-Before running, check the base server endpoint configured in `/src/utils/constants.js`.
-- For local development: `http://localhost:7777`
-- For production: `https://dev-finder.online/api`
+### 1. Base Endpoint Configuration
+Before running, inspect your API base endpoint configuration in `/src/utils/constants.js` to ensure it targets your local server or production URL appropriately.
 
 ### 2. Run the Development Server
+Install dependencies and run the server:
 ```bash
 npm install
 npm run dev
 ```
-Open `http://localhost:5173` in your web browser.
+
+The frontend runs locally on Vite's default development port.
 
 ---
 
 ## Deployment & Hosting
-To bundle static files for staging/production:
+Static assets are built locally or on the server, then hosted on an **AWS EC2 Instance** behind Nginx.
 
+### Step 1: Connect to your EC2 Instance
+Access your virtual machine via SSH:
 ```bash
-# Compile and optimize static assets
+ssh -i "your-key-file.pem" ubuntu@your-ec2-ip-address
+```
+
+### Step 2: Build Static Files
+Bundle and optimize static assets:
+```bash
 npm run build
 ```
 
-This generates a optimized `dist` folder. In production (AWS EC2), these assets are hosted using **Nginx**:
-```bash
-# Copy distribution bundle to Nginx standard folder
-sudo scp -r dist/* /var/www/html/
+This generates a static `dist` distribution folder.
 
-# Start & verify Nginx
+### Step 3: Deploy to Web Server
+Copy the output distribution bundle to the Nginx standard hosting directory:
+```bash
+sudo cp -r dist/* /var/www/html/
+```
+
+### Step 4: Reload Nginx
+Restart Nginx to apply changes:
+```bash
 sudo systemctl restart nginx
 ```
-Cloudflare SSL settings are configured as "Flexible" to guarantee secure HTTPS connections directly to users browsing `https://dev-finder.online`.
+
+### Step 5: Domain & DNS Setup
+- Domain name registration is managed via **NameCheap**.
+- DNS mapping, routing, and SSL certificate termination are configured via **Cloudflare** to guarantee secure HTTPS connections.
