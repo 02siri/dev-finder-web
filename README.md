@@ -1,3 +1,8 @@
+<img width="2880" height="1800" alt="DevFinder" src="https://github.com/user-attachments/assets/ab77d36c-8002-4db6-96b6-d02eab91175c" />
+
+Live app: https://dev-finder.online
+Walkthrough video: https://drive.google.com/file/d/1qvWsZd2BNCEeFTG0J9zBoRXWW4U5UUlt/view?usp=sharing
+
 # DevFinder Frontend
 
 This is the React web client for DevFinder, a full-stack social networking platform for software developers. It provides a modern interface where developers can discover matches, review pending requests, upgrade their accounts, and chat in real-time.
